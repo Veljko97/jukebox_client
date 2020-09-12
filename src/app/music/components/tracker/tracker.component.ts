@@ -27,11 +27,7 @@ export class TrackerComponent implements OnInit {
     this.progressProcent = 0;
     this.musicService.getCurrentSong().subscribe((currentSong: SongDescriptionModel) => this.loadCurrentSong(currentSong) );
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        //do whatever you want
-        console.log("Hidden");
-      }
-      else {
+      if (!document.hidden) {
         this.ngOnInit();
       }
 });
