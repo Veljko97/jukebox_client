@@ -7,10 +7,12 @@ import { config } from '../config';
 export class BaseService {
 
   baseUrl: string;
+  baseUrlLocked: string;
   host: string;
 
   constructor() {
     this.baseUrl = config.getApiUrl();
+    this.baseUrlLocked = this.baseUrl + '/lock';
     this.host = config.getHostName();
   }
 }

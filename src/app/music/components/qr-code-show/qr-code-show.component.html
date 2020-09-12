@@ -1,0 +1,6 @@
+<div class="main_content">
+    <qrcode #qrcode [qrdata]="serverKey" [width]="256" elementType="img"></qrcode>
+    <a [href]="link" download><button class="btn btn-block" (click)="dlDataUrlBin()">
+        Download <span class="material-icons">save_alt</span>
+    </button></a>
+</div>

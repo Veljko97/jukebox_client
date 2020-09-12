@@ -1,0 +1,33 @@
+<div class="main_content" ngxUiLoaderBlurred>
+
+    <input class="linkInput form-control" type="text" placeholder="YouTube liks ex. link1, link2" 
+    (keypress)="changeYoutubeLink($event)" [(ngModel)]="nextLink" />
+
+    <div class="uploadfileContainer" appDragDrop (onFileDropped)="uploadFile($event)" multiple>
+    
+    <input type="file" #fileInput (change)="uploadFile($event.target.files)" multiple></div>
+    
+    <div >
+            <ul class="leftList">
+                <li *ngFor="let songFile of songFiles; index as i">            
+                    {{songFile.name}}
+                    <button class="btn" (click)="removeFile(i)">
+                        <span class="material-icons">
+                            delete
+                        </span>
+                    </button>
+                </li>
+            </ul>
+            <ul class="rightList">
+                <li *ngFor="let songLink of songLinks; index as i">
+                    {{songLink}}
+                    <button class="btn" (click)="removeLink(i)">
+                        <span class="material-icons">
+                            delete
+                        </span>
+                    </button>
+                </li>
+            </ul>
+    </div>
+    <button  (click)="saveFiles()" class="saveFileBloc btn" > Save files </button>
+</div>

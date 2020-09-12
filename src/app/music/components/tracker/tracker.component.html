@@ -1,10 +1,16 @@
-<div class="progress">
-    <div id="songProgress" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="70"
-         aria-valuemin="10" aria-valuemax="100" [style.width.%]="progressProcent">
-         {{this.songTIme}}
+<div class="main_content player">
+    <span>
+        {{this.songTIme}}
+    </span>
+    <div class="progress">
+        <div id="songProgress" class="progress-bar progress-bar-info" role="progressbar"
+         [style.width.%]="progressProcent" style="color: black;">
+        </div>
     </div>
-</div>
 
-<div>
-    <button id="nextSong" class="btn">Next</button>
+    <div>
+        <button id="nextSong" class="btn" (click)="playNextSong()"><span class="material-icons">
+            skip_next
+            </span></button>
+    </div>
 </div>

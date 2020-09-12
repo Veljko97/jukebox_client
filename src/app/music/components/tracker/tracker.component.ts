@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NewSongModel } from 'src/app/models/new-song.model';
-import { TrackerService } from '../../service/tracker.service';
+import { MusicService } from '../../service/music.service';
 import { WebsocketService } from 'src/app/shared/services/websocket.service';
 import { SongDescriptionModel } from 'src/app/models/song-descrioption.model';
 
@@ -18,27 +18,43 @@ export class TrackerComponent implements OnInit {
 
   constructor(
     private websocketService: WebsocketService,
-    private trackerService: TrackerService
+    private musicService: MusicService
     ) { }
 
   ngOnInit(): void {
+    this.currentSongId = -1;
     this.websocketService.create(this.loadData.bind(this));
     this.progressProcent = 0;
-    this.trackerService.getCurrentSong().subscribe((currentSong: SongDescriptionModel) => this.loadCurrentSong(currentSong) );
+    this.musicService.getCurrentSong().subscribe((currentSong: SongDescriptionModel) => this.loadCurrentSong(currentSong) );
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        //do whatever you want
+        console.log("Hidden");
+      }
+      else {
+        this.ngOnInit();
+      }
+});
   }
 
   loadCurrentSong(currentSong: SongDescriptionModel){
-    this.progressProcent = 0;
+      this.progressProcent = 0;
 
-    this.repeatFunction(currentSong.songId, currentSong.songCurrentSample, currentSong.songMaxSample, currentSong.sampleRate)
+      this.repeatFunction(currentSong.songId, currentSong.songCurrentSample, currentSong.songMaxSample, currentSong.sampleRate);
   }
 
 
   loadData(newSong: NewSongModel) {
-    this.progressProcent = 0;
 
-    const nextSong = newSong.nextSong;
-    this.repeatFunction(nextSong.songId, nextSong.songCurrentSample, nextSong.songMaxSample, nextSong.sampleRate);
+      const nextSong = newSong.nextSong;
+      if(nextSong != null && nextSong.songId !== -1){
+        this.progressProcent = 0;
+        this.repeatFunction(nextSong.songId, nextSong.songCurrentSample, nextSong.songMaxSample, nextSong.sampleRate);
+      }
+  }
+
+  public playNextSong(){
+    this.musicService.playNextSong();
   }
 
   private repeatFunction(songId, start, end, sampleRate) {
@@ -47,7 +63,7 @@ export class TrackerComponent implements OnInit {
     this.progressProcent = 0;
     (function p(self, thisSongId) {
         if (self.currentSongId === thisSongId && currentSample < end) {
-            self.songTIme = self.trackerService.formatSongTime(currentSample / sampleRate, end / sampleRate);
+            self.songTIme = self.musicService.formatSongTime(currentSample / sampleRate, end / sampleRate);
             self.progressProcent = currentSample / end * 100;
             currentSample += sampleRate;
             setTimeout(p, 1000, self, songId);
