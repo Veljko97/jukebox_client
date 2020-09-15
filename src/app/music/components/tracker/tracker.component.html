@@ -1,16 +1,29 @@
-<div class="main_content player">
-    <span>
+<div class="main_content player" >
+
+    
+    <mat-progress-bar flex="15"
+        class="progress-bar"
+        [value]="progressProcent">
+    </mat-progress-bar>
+    <div>
         {{this.songTIme}}
-    </span>
-    <div class="progress">
-        <div id="songProgress" class="progress-bar progress-bar-info" role="progressbar"
-         [style.width.%]="progressProcent" style="color: black;">
-        </div>
     </div>
 
     <div>
-        <button id="nextSong" class="btn" (click)="playNextSong()"><span class="material-icons">
-            skip_next
-            </span></button>
+        <button id="playStop" class="btn" (click)="playStopSong()" >
+            <span class="material-icons" *ngIf="!isPlaying; else notPlaying">
+                play_arrow
+            </span>
+            <ng-template #notPlaying class="material-icons">
+                <span class="material-icons">
+                    stop
+                </span>
+            </ng-template>
+        </button>
+        <button id="nextSong" class="btn" (click)="playNextSong()">
+            <span class="material-icons">
+                skip_next
+            </span>
+        </button>
     </div>
 </div>

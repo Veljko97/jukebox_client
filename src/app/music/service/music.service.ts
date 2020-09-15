@@ -4,8 +4,10 @@ import { BaseService } from 'src/app/shared/services/base.service';
 import { map } from 'rxjs/operators';
 import { NewSongModel } from 'src/app/models/new-song.model';
 import { SongDescriptionModel } from 'src/app/models/song-descrioption.model';
+import { PlayStopResponseModel } from 'src/app/models/play-stop-response.model';
 
 const ENDPOINTS = {
+  PLAY_STOP_SONG: '/music/playStop',
   GET_CURRENT_SONG: '/music/getCurrentSong',
   PLAY_NEXT_SONG: '/music/nextSong',
   UPLOAD_SONGS: '/music/addMusic',
@@ -22,7 +24,13 @@ export class MusicService extends BaseService {
     super();
   }
 
-
+public playStopSong() {
+  return this.http.put(`${this.baseUrlLocked}${ENDPOINTS.PLAY_STOP_SONG}`, null).pipe(
+    map((res:any) => {
+      return (new PlayStopResponseModel()).deserialize(res);
+    })
+  );
+}
 
 public getCurrentSong() {
   return this.http.get(`${this.baseUrl}${ENDPOINTS.GET_CURRENT_SONG}`).pipe(

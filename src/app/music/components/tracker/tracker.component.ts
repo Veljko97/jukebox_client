@@ -3,6 +3,7 @@ import { NewSongModel } from 'src/app/models/new-song.model';
 import { MusicService } from '../../service/music.service';
 import { WebsocketService } from 'src/app/shared/services/websocket.service';
 import { SongDescriptionModel } from 'src/app/models/song-descrioption.model';
+import { PlayStopResponseModel } from 'src/app/models/play-stop-response.model';
 
 @Component({
   selector: 'app-tracker',
@@ -13,6 +14,7 @@ export class TrackerComponent implements OnInit {
 
   progressProcent: number;
   songTIme = '0:00 / 0:00';
+  isPlaying = true;
 
   private currentSongId: number;
 
@@ -25,7 +27,9 @@ export class TrackerComponent implements OnInit {
     this.currentSongId = -1;
     this.websocketService.create(this.loadData.bind(this));
     this.progressProcent = 0;
-    this.musicService.getCurrentSong().subscribe((currentSong: SongDescriptionModel) => this.loadCurrentSong(currentSong) );
+    this.musicService.getCurrentSong().subscribe(
+      this.loadCurrentSong.bind(this),
+      this.hangleCurrentSOngError );
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         this.ngOnInit();
@@ -36,9 +40,16 @@ export class TrackerComponent implements OnInit {
   loadCurrentSong(currentSong: SongDescriptionModel){
       this.progressProcent = 0;
 
-      this.repeatFunction(currentSong.songId, currentSong.songCurrentSample, currentSong.songMaxSample, currentSong.sampleRate);
+      if (this.isPlaying) {
+        this.repeatFunction(currentSong.songId, currentSong.songCurrentSample, currentSong.songMaxSample, currentSong.sampleRate);
+      }
   }
 
+  hangleCurrentSOngError(error: any){
+    if (error.status === 400){
+      this.isPlaying = false;
+    }
+  }
 
   loadData(newSong: NewSongModel) {
 
@@ -49,7 +60,27 @@ export class TrackerComponent implements OnInit {
       }
   }
 
+  public playStopSong(){
+    this.musicService.playStopSong().subscribe(
+      (resp: PlayStopResponseModel) => {
+        this.isPlaying = resp.isPlaying;
+        this.currentSongId = -1;
+        if (this.isPlaying) {
+          this.musicService.getCurrentSong().subscribe(
+            this.loadCurrentSong.bind(this),
+            this.hangleCurrentSOngError );
+        }
+      },
+      (err) => {
+        if(err.status === 400){
+          this.isPlaying = false;
+        }
+      }
+    )
+  }
+
   public playNextSong(){
+    this.isPlaying = true;
     this.musicService.playNextSong();
   }
 
@@ -61,8 +92,8 @@ export class TrackerComponent implements OnInit {
         if (self.currentSongId === thisSongId && currentSample < end) {
             self.songTIme = self.musicService.formatSongTime(currentSample / sampleRate, end / sampleRate);
             self.progressProcent = currentSample / end * 100;
-            currentSample += sampleRate;
-            setTimeout(p, 1000, self, songId);
+            currentSample += sampleRate / 10;
+            setTimeout(p, 100, self, songId);
         }
     })(this, songId);
   }

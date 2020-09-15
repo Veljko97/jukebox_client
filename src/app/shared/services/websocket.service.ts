@@ -15,9 +15,7 @@ export class WebsocketService extends BaseService {
   private websocket: WebSocketSubject<NewSongModel>;
 
   public create(callback: (NewSongModel) => void ) {
-    if(!this.websocket){
-      this.websocket = webSocket(`ws://${this.host}/ws/music`);
-    }
+    this.websocket = webSocket(`ws://${this.host}/ws/music`);
     this.websocket.asObservable().subscribe(newData => {
       console.log(newData);
       callback(newData);

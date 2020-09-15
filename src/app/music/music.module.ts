@@ -7,6 +7,7 @@ import { DragDropDirective } from './directives/drag-drop.directive';
 import { FormsModule } from '@angular/forms';
 import { QRCodeModule } from 'angularx-qrcode';
 import { QrCodeShowComponent } from './components/qr-code-show/qr-code-show.component';
+import { MaterialModule } from '../shared/material-module';
 
 
 
@@ -16,7 +17,8 @@ import { QrCodeShowComponent } from './components/qr-code-show/qr-code-show.comp
     CommonModule,
     MusicRouting,
     FormsModule,
-    QRCodeModule
+    QRCodeModule,
+    MaterialModule
   ],
   exports:[DragDropDirective]
 })
